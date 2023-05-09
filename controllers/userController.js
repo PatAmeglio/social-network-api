@@ -1,9 +1,9 @@
-const { Users, Thought } = require('../models');
+const { User, Thought } = require('../models');
 
 const userController = {
 
   getAllUsers(req, res) {
-    Users.find({})
+    User.find({})
       .populate({
         path: 'friends',
         select: '-__v',
@@ -18,7 +18,7 @@ const userController = {
   },
 
   getUserById({ params }, res) {
-    Users.findOne({ _id: params.id })
+    User.findOne({ _id: params.id })
       .populate({
         path: 'thought',
         select: '-__v',
@@ -43,7 +43,7 @@ const userController = {
   },
 
   createUser({ body }, res) {
-    Users.create(body)
+    User.create(body)
       .then((userData) => res.json(userData))
       .catch(err => {
         console.log(err);
@@ -52,7 +52,7 @@ const userController = {
   },
 
   updateUser({ params, body }, res) {
-    Users.findOneAndUpdate(
+    User.findOneAndUpdate(
       { _id: params.id },
       body,
       { new: true, runValidators: true, })
@@ -71,7 +71,7 @@ const userController = {
   },
 
   deleteUser({ params }, res) {
-    Users.findOneAndDelete({ _id: params.id })
+    User.findOneAndDelete({ _id: params.id })
       .then((userData) => {
         if (!userData) {
           return res.status(404).json({ message: 'User not found!' });
@@ -89,7 +89,7 @@ const userController = {
   },
 
   addFriend({ params }, res) {
-    Users.findOneAndUpdate(
+    User.findOneAndUpdate(
       { _id: params.userId },
       { $addToSet: { friends: params.friendId } },
       { new: true, runValidators: true }
@@ -109,7 +109,7 @@ const userController = {
   },
 
   removeFriend({ params }, res) {
-    Users.findOneAndUpdate(
+    User.findOneAndUpdate(
       { _id: params.userId },
       { $pull: { friends: params.friendId } },
       { new: true }
