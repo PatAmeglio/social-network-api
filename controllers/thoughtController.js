@@ -44,7 +44,7 @@ const thoughtController = {
             .then(({ _id }) => {
                 return User.findOneAndUpdate(
                     { _id: body.userId },
-                    { $push: { thought: _id } },
+                    { $push: { thoughts: _id } },
                     { new: true }
                 );
             })
@@ -87,12 +87,12 @@ const thoughtController = {
                 if (!thoughtData) {
                     return res.status(404).json({ message: 'No thoughts found!' });
                 }
-                return User.findOneAndUpdate(
+                User.findOneAndUpdate(
                     { _id: params.userId },
-                    { $pull: { thought: params.Id } },
+                    { $pull: { thoughts: params.Id } },
                     { new: true }
-                )
-                
+                ).then(userData => res.json(userData))
+
             })
 
             .catch(err => {
@@ -124,7 +124,7 @@ const thoughtController = {
     deleteReaction({ params }, res) {
         Thought.findOneAndUpdate(
             { _id: params.thoughtId },
-            { $pull: { reactions: { reactionId: params.reactionId } } },
+            { $pull: { reactions: { _id: params.reactionId } } },
             { new: true })
             .then(thoughtData => {
                 if (!thoughtData) {
